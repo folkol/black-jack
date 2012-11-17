@@ -40,7 +40,7 @@ public class Main extends JPanel implements ActionListener {
     private Vector<Kort> dealersCards = new Vector<Kort>();
 
     public static void main(String[] args) throws IOException {
-        JFrame frame = new JFrame("Welcome to Black Jack!");
+        JFrame frame = new JFrame("Welcome to Blackjack!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         frame.add(new Main());
