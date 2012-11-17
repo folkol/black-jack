@@ -1,115 +1,81 @@
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 
 public class Kort {
-    private String suit;
-    private String rank;
-    public int x, y;
+    private String suitName;
+    private String rankName;
+    public int suit, rank;
     public BufferedImage b;
 
     public Kort(int i, int j) {
-        x = i;
-        y = j + 1;
+        suit = i;
+        rank = j + 1;
         if (i == 0) {
-            suit = "Spader";
+            suitName = "Hearts";
         } else if (i == 1) {
-            suit = "Klöver";
+            suitName = "Diamonds";
         } else if (i == 2) {
-            suit = "Hjärter";
+            suitName = "Clubs";
         } else if (i == 3) {
-            suit = "Ruter";
+            suitName = "Spades";
         }
         if (j == 0) {
-            rank = "Ess";
+            rankName = "Ess";
         } else if (j == 1) {
-            rank = "Två";
+            rankName = "Två";
         } else if (j == 2) {
-            rank = "Tre";
+            rankName = "Tre";
         } else if (j == 3) {
-            rank = "Fyra";
+            rankName = "Fyra";
         } else if (j == 4) {
-            rank = "Fem";
+            rankName = "Fem";
         } else if (j == 5) {
-            rank = "Sex";
+            rankName = "Sex";
         } else if (j == 6) {
-            rank = "Sju";
+            rankName = "Sju";
         } else if (j == 7) {
-            rank = "Åtta";
+            rankName = "Åtta";
         } else if (j == 8) {
-            rank = "Nio";
+            rankName = "Nio";
         } else if (j == 9) {
-            rank = "Tio";
+            rankName = "Tio";
         } else if (j == 10) {
-            rank = "Knekt";
+            rankName = "Knekt";
         } else if (j == 11) {
-            rank = "Dam";
+            rankName = "Dam";
         } else if (j == 12) {
-            rank = "Kung";
+            rankName = "Kung";
         }
     }
 
     public String toString() {
-        return "Kortet är: " + suit + " " + rank;
+        return "Kortet är: " + suitName + " " + rankName;
     }
 
     public int getSuit() {
-        return x;
+        return suit;
     }
 
     public int getRank() {
-        return y;
+        return rank;
     }
 
     public BufferedImage getCardImage() throws IOException {
-        b = new BufferedImage(64, 96, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = b.getGraphics();
-        BufferedImage bi = null;
-        JLabel label = new JLabel(new ImageIcon(b));
-        g.setColor(Color.white);
-        g.fillRect(0, 0, 64, 96);
-        if (suit == "Hjärter") {
-            bi = ImageIO.read(new File("images/heartsbig.jpg"));
-            g.setColor(Color.red);
-        } else if (suit == "Ruter") {
-            bi = ImageIO.read(new File("images/diamondsbig.jpg"));
-            g.setColor(Color.red);
-        } else if (suit == "Spader") {
-            bi = ImageIO.read(new File("images/spadesbig.jpg"));
-            g.setColor(Color.black);
-        } else if (suit == "Klöver") {
-            bi = ImageIO.read(new File("images/clubsbig.jpg"));
-            g.setColor(Color.black);
-        }
-        g.drawImage(bi, 10, 2, 12, 12, null);
-        g.drawImage(bi, 42, 80, 12, 12, null);
-        g.drawImage(bi, 16, 32, 32, 32, null);
-        if (y == 1) {
-            g.drawString("A", 2, 12);
-            g.drawString("A", 56, 88);
-        } else if (y > 1 && y < 11) {
-            g.drawString(Integer.toString(y), 2, 12);
-            g.drawString(Integer.toString(y), 56, 92);
-        } else if (y == 11) {
-            g.drawString("J", 2, 12);
-            g.drawString("J", 56, 92);
-        } else if (y == 12) {
-            g.drawString("D", 2, 12);
-            g.drawString("D", 56, 92);
-        } else if (y == 13) {
-            g.drawString("K", 2, 12);
-            g.drawString("K", 56, 92);
-        }
+        BufferedImage cards = ImageIO.read(new File("images/cards.png"));
+        int x = rank - 1;
+        int y = suit * 40;
+        int w = 40;
+        int h = 60;
+
+        BufferedImage b = cards.getSubimage(x, y, w, h);
         return b;
     }
 
+
     public boolean isAce() {
-        return y == 1;
+        return rank == 1;
     }
 }

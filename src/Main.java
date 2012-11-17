@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -6,9 +5,11 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -16,7 +17,9 @@ import javax.swing.JPanel;
 
 public class Main extends JPanel implements ActionListener {
 
-    private Image table = new BufferedImage(800, 550, BufferedImage.TYPE_INT_RGB);
+    private static final int HEIGHT = 368;
+    private static final int WIDTH = 470;
+    private Image table = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
     private Dimension size = new Dimension();
     private Kortlek kortlek;
     private int nextPaintLocation = 0;
@@ -27,9 +30,9 @@ public class Main extends JPanel implements ActionListener {
     private Vector<Kort> dealersCards = new Vector<Kort>();
 
     public static void main(String[] args) throws IOException {
-        JFrame frame = new JFrame("21");
+        JFrame frame = new JFrame("Black Jack");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+        frame.setSize(WIDTH, HEIGHT);
         frame.add(new Main());
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -56,15 +59,12 @@ public class Main extends JPanel implements ActionListener {
         newGame();
     }
 
-    private void newGame() {
+    private void newGame() throws IOException {
         drawButton.setEnabled(true);
         passButton.setEnabled(true);
 
-        table = new BufferedImage(800, 550, BufferedImage.TYPE_INT_RGB);
-        Graphics graphics = table.getGraphics();
-        graphics.setColor(new Color(0, 125, 0));
-        graphics.fillRect(0, 0, 800, 550);
-        graphics.dispose();
+        table = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        table = ImageIO.read(new File("images/table.png"));
 
         kortlek = new Kortlek();
         kortlek.shuffle();
@@ -80,7 +80,7 @@ public class Main extends JPanel implements ActionListener {
     public void paint(Graphics g) {
         super.paint(g); // Run the paint in the parent class (JPanel) which will paint children etc (Buttons)
         Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(table, 0, 40, 800, 550, 0, 0, 800, 550, null);
+        g2d.drawImage(table, 0, 40, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT - 40, null);
     }
 
     @Override
@@ -109,7 +109,7 @@ public class Main extends JPanel implements ActionListener {
 
             BufferedImage cardImage = draw.getCardImage();
             Graphics graphics = table.getGraphics();
-            graphics.drawImage(cardImage, nextPaintLocation + 100, 300, null);
+            graphics.drawImage(cardImage, nextPaintLocation + 100, 35, null);
             graphics.dispose();
             nextPaintLocation += 100;
 
