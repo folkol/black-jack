@@ -155,7 +155,8 @@ public class Main extends JPanel implements ActionListener {
     /**
      * This method will add the value of the cards, treating aces as either 1 or 14,
      * whichever gets the highest sum still below or equal to 21. All dressed cards
-     * are considered being worth 10 points
+     * are considered being worth 10 points.
+     * Ace are 1 or 11, whichever is most beneficial
      * @param cards
      * @return the value of the hand of cards
      */
@@ -171,9 +172,9 @@ public class Main extends JPanel implements ActionListener {
             }
         }
 
-        while(numAces > 0 && sum + 13 <= 21) {
+        while(numAces > 0 && sum + 10 <= 21) {
             numAces--;
-            sum += 13;
+            sum += 10;
         }
 
         return sum;
