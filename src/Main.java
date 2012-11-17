@@ -17,12 +17,22 @@ import javax.swing.JPanel;
 
 public class Main extends JPanel implements ActionListener {
 
-    private static final int HEIGHT = 368;
-    private static final int WIDTH = 470;
-    private Image table = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+    private static final int DEALER_YIELD_AT = 17;
+    private static final int DEALER_CARD_INCREMENT_X = 50;
+    private static final int DEALER_CARD_INCREMENT_Y = 0;
+    private static final int DEALER_CARD_Y = 60;
+    private static final int DEALER_CARD_X = 115;
+    private static final int PLAYER_CARD_Y = 220;
+    private static final int PLAYER_CARD_X = 195;
+    private static final int PLAYER_CARD_INCREMENT_Y = -20;
+    private static final int PLAYER_CARD_INCREMENT_X = 20;
+    private static final int WINDOW_HEIGHT = 368;
+    private static final int WINDOW_WIDTH = 470;
+    private static final int MENU_HEIGHT = 40;
+
+    private Image table = new BufferedImage(WINDOW_WIDTH, WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
     private Dimension size = new Dimension();
-    private Kortlek kortlek;
-    private int nextPaintLocation = 0;
+    private Kortlek deck = new Kortlek();
     private JButton drawButton = new JButton();
     private JButton passButton = new JButton();
     private JButton resetButton = new JButton();
@@ -30,9 +40,9 @@ public class Main extends JPanel implements ActionListener {
     private Vector<Kort> dealersCards = new Vector<Kort>();
 
     public static void main(String[] args) throws IOException {
-        JFrame frame = new JFrame("Black Jack");
+        JFrame frame = new JFrame("Welcome to Black Jack!");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(WIDTH, HEIGHT);
+        frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         frame.add(new Main());
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -63,24 +73,26 @@ public class Main extends JPanel implements ActionListener {
         drawButton.setEnabled(true);
         passButton.setEnabled(true);
 
-        table = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        table = new BufferedImage(WINDOW_WIDTH, WINDOW_HEIGHT, BufferedImage.TYPE_INT_RGB);
         table = ImageIO.read(new File("images/table.png"));
 
-        kortlek = new Kortlek();
-        kortlek.shuffle();
-
-        nextPaintLocation = 0;
+        deck = new Kortlek();
+        deck.shuffle();
 
         myCards.clear();
         dealersCards.clear();
+
+        drawCard();
+        drawCard();
 
         repaint();
     }
 
     public void paint(Graphics g) {
-        super.paint(g); // Run the paint in the parent class (JPanel) which will paint children etc (Buttons)
+        super.paint(g);
+
         Graphics2D g2d = (Graphics2D) g;
-        g2d.drawImage(table, 0, 40, WIDTH, HEIGHT, 0, 0, WIDTH, HEIGHT - 40, null);
+        g2d.drawImage(table, 0, MENU_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT - MENU_HEIGHT, null);
     }
 
     @Override
@@ -99,19 +111,19 @@ public class Main extends JPanel implements ActionListener {
 
     private void done() throws IOException {
         int sum = 0;
-        int nextPaintLocation = 0;
 
-        while (sum < 17) {
-            Kort draw = kortlek.draw();
+        while (sum < DEALER_YIELD_AT) {
+            Kort draw = deck.draw();
             dealersCards.add(draw);
 
             sum = hand(dealersCards);
 
             BufferedImage cardImage = draw.getCardImage();
             Graphics graphics = table.getGraphics();
-            graphics.drawImage(cardImage, nextPaintLocation + 100, 35, null);
+            int nextCardX = DEALER_CARD_X + DEALER_CARD_INCREMENT_X * dealersCards.size();
+            int nextCardY = DEALER_CARD_Y + DEALER_CARD_INCREMENT_Y * dealersCards.size();;
+            graphics.drawImage(cardImage, nextCardX, nextCardY, null);
             graphics.dispose();
-            nextPaintLocation += 100;
 
             repaint();
         }
@@ -124,8 +136,9 @@ public class Main extends JPanel implements ActionListener {
         int dealerPoints = hand(dealersCards);
 
         String message;
-
-        if (dealerPoints > 21 || myPoints > dealerPoints) {
+        if (myPoints > 21) {
+            message = "You lost!";
+        } else if (dealerPoints > 21 || dealerPoints < myPoints){
             message = "You won!";
         } else {
             message = "You lost!";
@@ -151,11 +164,8 @@ public class Main extends JPanel implements ActionListener {
         int sum = 0;
 
         for (Kort kort : cards) {
-            int rank = kort.getRank();
-            if (rank > 10) {
-                rank = 10;
-            }
-            sum += rank;
+            int value = kort.getValue();
+            sum += value;
             if (kort.isAce()) {
                 numAces++;
             }
@@ -170,18 +180,20 @@ public class Main extends JPanel implements ActionListener {
     }
 
     private void drawCard() throws IOException {
-        Kort draw = kortlek.draw();
+        Kort draw = deck.draw();
         myCards.add(draw);
+
         BufferedImage cardImage = draw.getCardImage();
         Graphics graphics = table.getGraphics();
-        graphics.drawImage(cardImage, nextPaintLocation + 100, 100, null);
+        int nextCardX = PLAYER_CARD_X + PLAYER_CARD_INCREMENT_X * myCards.size();
+        int nextCardY = PLAYER_CARD_Y + PLAYER_CARD_INCREMENT_Y * myCards.size();
+        graphics.drawImage(cardImage, nextCardX, nextCardY, null);
         graphics.dispose();
-        nextPaintLocation += 100;
 
         repaint();
 
         if (hand(myCards) > 21) {
-            done();
+            gameOver();
         }
     }
 }
